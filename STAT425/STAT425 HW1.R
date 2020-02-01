@@ -24,3 +24,14 @@ confint(slr_invoice,level = .95)
 #3d
 predict_data = data.frame(Invoices = 130)
 predict(slr_invoice,predict_data,interval = "prediction",level = .95)
+
+#problem 5
+indicators = read.delim(file.choose())
+slr_indicators = lm(PriceChange ~ LoanPaymentsOverdue, data = indicators)
+#5a
+summary(slr_indicators)
+#5b
+confint(slr_indicators)
+#5c
+predict_data2 = data.frame(LoanPaymentsOverdue = 4)
+predict(slr_indicators,predict_data2,interval = "confidence",level = .95)
