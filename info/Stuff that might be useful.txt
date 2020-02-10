@@ -1,0 +1,17 @@
+My Repo: https://github-dev.cs.illinois.edu/stat385-sp20/achan40.git
+Course Repo: https://github-dev.cs.illinois.edu/stat385-sp20/stat385resources.git
+
+To push: 
+1. Navigate to my local repo
+2. "git add *file/folder*"
+3. "git commit -m *updatecomment*"
+4. "git push"
+
+To pull:
+1. Navigate to my local repo
+2. "git pull" 
+
+To checkout past version:
+1. "git log"
+2. "git checkout *version*" to checkout past version
+3. "git checkout master" to return to master branch
