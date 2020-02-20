@@ -5,9 +5,11 @@ head(sat)
 
 #a
 sat_model1 = lm(total ~ expend+ratio+salary,data = sat)
+summary(sat_model1)
 
 #b
 sat_model2 = lm(total ~ expend+ratio+salary+takers,data = sat)
+summary(sat_model2)
 
 #Problem 2
 data("prostate")
