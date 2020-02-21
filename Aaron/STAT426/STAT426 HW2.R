@@ -1,5 +1,5 @@
 #Problem 4
-setwd("/Users/chanm/Desktop/STATclasses/STAT426")
+setwd("/Users/chanm/Desktop/STATclasses/Aaron/STAT426")
 UCadmissions = as.data.frame(read.csv(file = 'UC-Admissions.csv'),header=TRUE)
 UCadmissions = transform(UCadmissions,
                          Department = relevel(Department,"A"),
