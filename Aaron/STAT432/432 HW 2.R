@@ -9,7 +9,7 @@ sum(prior*dpois(X,prior2))
 dpois(X,prior2[2])*prior[2]/pX
 #2----------------------------------------
 # set seed 
-set.seed(90478)
+set.seed(67775)
 
 # generate data from known poisson distribution
 pois_data = rpois(n = 250, lambda = 3.5)

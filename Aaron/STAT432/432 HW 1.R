@@ -3,21 +3,24 @@ dnorm(3.13,mean = 3.5,sd=2.9)
 dnorm(3.13,mean=6.6,sd=2.3)
 dnorm(7.68,mean=6.6,sd=2.3)
 #2
-a = 4.5
-b = 4.8
-pnorm(15.27,mean = a,sd = b,lower.tail = TRUE)
-pnorm(-3.4,mean = a,sd = b,lower.tail = TRUE)-pnorm(-8.37,mean = a,sd = b,lower.tail = TRUE)
-pnorm(.48,mean = a,sd = b,lower.tail = FALSE)
+a = 4.3
+b = 3.8
+dnorm(-.96,mean = a,sd = b)
+pnorm(-.96,mean = a,sd = b,lower.tail = TRUE)
+pnorm(7.24,mean = a,sd = b,lower.tail = TRUE)-pnorm(10.82,mean = a,sd = b,lower.tail = TRUE)
+pnorm(10.9,mean = a,sd = b,lower.tail = FALSE)
+
+
 #3
-a=4.4
-b=4.7
-qnorm(.76,mean = a,sd=b)
-qnorm(.78,mean = a,sd=b)
+a=6.8
+b=.7
+qnorm(.72,mean = a,sd=b)
+qnorm(.26,mean = a,sd=b,lower.tail = FALSE)
 #4
 sqrt(16+4*1.5^2+64*9)
 #5
-a=8.4
-dpois(2,lambda = a)
+a=6.2
+dpois(3,lambda = a)
 ppois(4,lambda =a ,lower.tail = TRUE)-ppois(0,lambda =a ,lower.tail = TRUE)
 ppois(6,lambda =a ,lower.tail = FALSE)
 #6
@@ -39,10 +42,20 @@ sum(some_data$x.2>.5)/nrow(some_data)
 #9
 # set seed 
 library("Metrics")
-set.seed(59532)
-x = rnorm(n = 500, mean = 5, sd = 2)
-y = rnorm(n = 500, mean = 4, sd = 2)
+set.seed(50224)
+Actual = rnorm(n = 500, mean = 5, sd = 2)
+predicted = rnorm(n = 500, mean = 4, sd = 2)
 rmse(y,x)
 mae(y,x)
 
 (.4*.05)/.343
+
+calc_RMSE = function(Actual,predicted){
+  sqrt(mean((Actual-predicted)^2))
+}
+calc_MAE = function(Actual,predicted){
+  mean(abs(Actual-predicted))
+}
+
+calc_RMSE(Actual,predicted)
+calc_MAE(Actual,predicted)
