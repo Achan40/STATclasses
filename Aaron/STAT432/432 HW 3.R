@@ -1,11 +1,11 @@
 #3.1
-prior = c(.19,.53,.28)
-prior2 = c(2.7,5.7,7)
-X = 5
+prior = c(.28,.4,.32)
+prior2 = c(6.3,6.6,4.3)
+X = 3
 
 prior[2]*pexp(X,prior2[2],lower.tail = FALSE)
 pX = sum(prior*pexp(X,prior2,lower.tail = FALSE))
-sum(prior*pexp(X,prior2,lower.tail = FALSE))
+pX
 pexp(X,prior2[2],lower.tail = FALSE)*prior[2]/pX
 
 #3.2
