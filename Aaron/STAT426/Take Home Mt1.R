@@ -112,3 +112,16 @@ Gsq_ID1
 
 1-pchisq(Gsq_ID1,df=(nrow(ID_tab1)-1)*(ncol(ID_tab1)-1))
 #considering non-whites and whites, we can reject the indenpendence hypothesis as well since the p-value for chi-sq is much less than alpha=5%
+
+
+#Problem 4
+Fish = data.frame(Malformation=c("Yes","Yes","No","No"),
+                       Lead=c("Yes","No","Yes","No"),
+                       Affected=c(7,7,7,18))
+
+Fish_tab = xtabs(Affected ~ Lead + Malformation, data=Fish)
+Fish_tab
+fisher.test(Fish_tab,alternative = "greater")
+#Fishers exact test returns a pvalue of 0.1526
+#at this p-value, we cannot reject H0:(odds ratio)theta=1 variables are independent. 
+#At a 95% confidence level we cannot say that there is a greater chance of malformation when there is lead pollution.
