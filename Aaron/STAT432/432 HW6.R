@@ -20,7 +20,7 @@ library("caret")
 library("mlbench")
 
 # set seed 
-set.seed(8)
+set.seed(14)
 
 # simulate data
 sim_data = as_tibble(mlbench.spirals(n = 500, sd = 0.15))
@@ -43,13 +43,22 @@ k = seq(1, 51, by = 2)
 
 #accuracy function
 calc_mod_accuracy = function(d) {
-  mod = knnreg(classes ~., data = sim_est,k=d)
+  mod = knn3(classes ~., data = sim_est,k=d)
   mean(sim_val$classes==predict(mod,sim_val,type="class"))
 }
-#make a list
+#make a list (most variable k=1,most biased k=51)
 validation_acc_list = map_dbl(k, calc_mod_accuracy)
 validation_acc_list
 sd(validation_acc_list)
+
+#test accuracy
+tstmod = knn3(classes~.,data = sim_trn,k=19)
+#create accuracy function
+calc_accuracy = function(actual, predicted) {
+  mean(actual == predicted)#average of how many actual values equal to predicted values gives us the accuracy
+}
+
+calc_accuracy(sim_tst$classes,predict(tstmod,sim_tst,type="class"))
 
 #6.3
 #a&b plug in x1 and x2
