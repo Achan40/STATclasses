@@ -112,17 +112,59 @@ some_data = gen_logistic_data()
 # checking the data
 head(some_data)
 
-B0 = c(-.84,-.64,1.08)
-B1 = c(4.25,.72,.25)
-B2 = c(3.24,-.36,5)
+B0 = c(-2.84,-2.98,-2.32)
+B1 = c(3.46,.88,1.99)
+B2 = c(-3.46,-7.45,6.83)
 
-a=B0[1]+ B1[1]*(some_data$x1)-B2[1]*(some_data$x2)
-b=B0[2]+ B1[2]*(some_data$x1)-B2[2]*(some_data$x2)
-c=B0[3]+ B1[3]*(some_data$x1)-B2[3]*(some_data$x2)
+a=B0[1]+B1[1]*(some_data$x1)+B2[1]*(some_data$x2)
+b=B0[2]+B1[2]*(some_data$x1)+B2[2]*(some_data$x2)
+c=B0[3]+B1[3]*(some_data$x1)+B2[3]*(some_data$x2)
 pa=1/(1+exp(-a))
 pb=1/(1+exp(-b))
 pc=1/(1+exp(-c))
-log(dbinom(some_data$y,1,pa))
-log(dbinom(some_data$y,1,pb))
-log(dbinom(some_data$y,1,pc))
+sum(log(dbinom(some_data$y,1,pa)))
+sum(log(dbinom(some_data$y,1,pb)))
+sum(log(dbinom(some_data$y,1,pc)))
+#sum of squares of B1 and B2 of largest log-likelihood
+sqrt(sum(B1[1]^2 + B2[1]^2))
 
+#6.7
+#bayes classifier cutoff is .5, plug and chugg. if prob is <.5 then classifier =0
+eqlog = c(4.57, -1.46, -1.84)
+x1 = c(.13, .68, .74, .49)
+x2 = c(-.58, .34, -.92, .93)
+
+eqlog[1] + eqlog[2]*x1[1] + eqlog[3]*x2[1]
+eqlog[1] + eqlog[2]*x1[2] + eqlog[3]*x2[2]
+eqlog[1] + eqlog[2]*x1[3] + eqlog[3]*x2[3]
+eqlog[1] + eqlog[2]*x1[4] + eqlog[3]*x2[4]
+
+#6.8
+# load packages
+library(mlbench)
+library(tibble)
+
+# simulate data
+set.seed(42)
+sim_data = as_tibble(mlbench.2dnormals(n = 300, sd = 1.5))
+
+# check data
+sim_data
+
+#create model
+logregress = glm(classes ~ .,data = sim_data,family = "binomial")
+summary(logregress)
+#dataframe for prediction
+b.data = data.frame(x.1 = -.99, x.2 = -.73)
+c.data = data.frame(x.1 = -.39, x.2 = -.62)
+d.data = c(.04)
+
+#for classes=2
+predict(logregress,b.data,type = "response")
+
+#for classes=1
+1-predict(logregress,c.data,type = "response")
+
+#see scratch paper for explaination (or q6.5)
+equationlog = coef(logregress)
+(-equationlog[1]-equationlog[2]*d.data)/equationlog[3]
