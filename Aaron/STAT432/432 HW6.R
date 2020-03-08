@@ -168,3 +168,154 @@ predict(logregress,b.data,type = "response")
 #see scratch paper for explaination (or q6.5)
 equationlog = coef(logregress)
 (-equationlog[1]-equationlog[2]*d.data)/equationlog[3]
+
+#6.9
+# load packages
+library(mlbench)
+library(tibble)
+library(purrr)
+
+# simulate data
+set.seed(2598)
+sim_est = as_tibble(mlbench.circle(200))
+sim_val = as_tibble(mlbench.circle(200))
+sim_trn = rbind(sim_est, sim_val)
+sim_tst = as_tibble(mlbench.circle(1000))
+
+# check data
+sim_est
+
+mod1 = glm(classes ~ 1,data = sim_est,family = "binomial")
+mod2 = glm(classes ~ .,data = sim_est,family = "binomial")
+mod3 = glm(classes ~ x.1+x.2+I(x.1^2)+I(x.2^2),data = sim_est,family = "binomial")
+
+#all the probabilities are the same in the intercept model, same answer for a and b
+predict(mod1,type = "response")
+
+#why is is like this idk
+mean(ifelse(predict(mod1,newdata = sim_val,type = "response") > 0.5, 2,1) != sim_val$classes)
+mean(ifelse(predict(mod2,newdata = sim_val,type = "response") > 0.5, 2,1) != sim_val$classes)
+mean(ifelse(predict(mod3,newdata = sim_val,type = "response") > 0.5, 2,1) != sim_val$classes)
+
+#best model
+mod4 = glm(classes ~ x.1+x.2+I(x.1^2)+I(x.2^2),data = sim_trn,family = "binomial")
+mean(ifelse(predict(mod4,newdata = sim_tst,type = "response") > 0.5, 2,1) != sim_tst$classes)
+
+#mod2_val_pred = ifelse(predict(mod2) > 0, "2","1" != sim_val$classes)
+#mean(mod2_val_pred != sim_val$classes)
+
+#mod3_val_pred = ifelse(predict(mod3) > 0, "2","1" != sim_val$classes)
+#mean(mod3_val_pred != sim_val$classes)
+
+
+#Q6.10
+library("mlbench")
+library("tibble")
+
+# set seed 
+set.seed(30684)
+
+# load data and coerce to tibble
+default = as_tibble(ISLR::Default)
+
+# split data
+dft_trn_idx = sample(nrow(default), size = 0.8 * nrow(default))
+dft_trn = default[dft_trn_idx, ]
+dft_tst = default[-dft_trn_idx, ]
+
+# check data
+dft_trn
+
+mod.10=glm(default~., data=dft_trn, family="binomial")
+result= predict(mod.10,newdata=dft_tst,type="response")
+#range(result)
+
+table(dft_tst$default,result>0.01)
+#true positives= true,yes (act,pred)
+#false positives=  true,no
+#false negatives=  false,yes
+#true negatives= false,no
+
+#Q6.11
+# load packages
+library("tidyverse")
+library("rpart")
+library("caret")
+library("mlbench")
+library("e1071")
+
+# set seed 
+set.seed(71)
+
+# simulate data
+sim_data = as_tibble(mlbench.spirals(n = 500, sd = 0.15))
+
+# test-train split
+sim_trn_idx = sample(nrow(sim_data), size = 0.8 * nrow(sim_data))
+sim_trn = sim_data[sim_trn_idx, ]
+sim_tst = sim_data[-sim_trn_idx, ]
+
+# estimation-validation split
+sim_est_idx = sample(nrow(sim_trn), size = 0.8 * nrow(sim_trn))
+sim_est = sim_trn[sim_est_idx, ]
+sim_val = sim_trn[-sim_est_idx, ]
+
+# check data
+sim_trn
+
+mod=knn3(classes~., k=13, data=sim_est)
+mod1=knn3(classes~., k=13, data=sim_trn)
+#accuracy = (truepositive+truenegative)/(positive+negative)
+calcACC=function(actual,predicted){
+  mean(actual==predicted)
+}
+calcACC(actual=sim_val$classes, predicted=predict(mod,sim_val,type="class"))
+#1-accuracy
+calc_misclass=function(actual,predicted){
+  mean(actual!=predicted)
+}        
+calc_misclass(actual=sim_val$classes, predicted=predict(mod,sim_val,type="class"))        
+
+#sensitivity and specificity
+mod=knn3(classes~., k=13, data=sim_est)
+pred.11=as.factor(ifelse(predict(mod,sim_val,type="prob")[,2]>0.5,2,1))
+confMa=confusionMatrix(pred.11,reference=sim_val$classes)
+confMa
+#prevalence = no information rate
+#sensitivity and specificity switched??
+
+#When you study this later, take a look at the notes so that we can actually do this without
+#loading in a package that may/not be used on the exam
+
+#6.12
+# load packages
+library("mlbench")
+library("tibble")
+library("rpart")
+
+# set seed 
+set.seed(21)
+
+# load data, remove NA rows, coerce to tibble
+data("PimaIndiansDiabetes2")
+diabetes = as_tibble(na.omit(PimaIndiansDiabetes2))
+
+# split data
+dbt_trn_idx = sample(nrow(diabetes), size = 0.8 * nrow(diabetes))
+dbt_trn = diabetes[dbt_trn_idx, ]
+dbt_tst = diabetes[-dbt_trn_idx, ]
+
+# check data
+dbt_trn
+summary(dbt_trn)
+summary(dbt_tst)
+mod.12=rpart(diabetes~., data=dbt_trn)
+result.12=as.factor(ifelse(predict(mod.12,dbt_tst,type="prob")[,2]>0.85,2,1))
+
+table(dbt_tst$diabetes,result.12)
+#accuracy= (TP+TN)/(P+N)
+(51+7)/(51+12+9+7)
+#sensivity= TP/P
+7/19 #(2,pos)/(1,pos + 2,pos)
+#specificty= TN/N
+1- 9/60 #1- (2,neg)/(1,neg + 2,neg)
