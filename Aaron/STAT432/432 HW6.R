@@ -294,7 +294,7 @@ library("tibble")
 library("rpart")
 
 # set seed 
-set.seed(21)
+set.seed(17)
 
 # load data, remove NA rows, coerce to tibble
 data("PimaIndiansDiabetes2")
@@ -312,10 +312,12 @@ summary(dbt_tst)
 mod.12=rpart(diabetes~., data=dbt_trn)
 result.12=as.factor(ifelse(predict(mod.12,dbt_tst,type="prob")[,2]>0.85,2,1))
 
-table(dbt_tst$diabetes,result.12)
+table.dat = table(dbt_tst$diabetes,result.12)
+table.dat
 #accuracy= (TP+TN)/(P+N)
-(51+7)/(51+12+9+7)
+(table.dat[1,1]+table.dat[2,2])/(table.dat[1,1]+table.dat[2,1]+table.dat[1,2]+table.dat[2,2])
 #sensivity= TP/P
-7/19 #(2,pos)/(1,pos + 2,pos)
+(table.dat[2,2]/sum(table.dat[2,]))
 #specificty= TN/N
-1- 9/60 #1- (2,neg)/(1,neg + 2,neg)
+1-table.dat[1,2]/sum(table.dat[1,])
+
