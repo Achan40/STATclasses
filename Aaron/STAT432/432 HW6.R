@@ -176,7 +176,7 @@ library(tibble)
 library(purrr)
 
 # simulate data
-set.seed(2598)
+set.seed(365)
 sim_est = as_tibble(mlbench.circle(200))
 sim_val = as_tibble(mlbench.circle(200))
 sim_trn = rbind(sim_est, sim_val)
