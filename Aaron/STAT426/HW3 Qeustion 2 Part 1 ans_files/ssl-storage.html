@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)https://www.chegg.com/tutors/publish/static/ssl-storage.html?ssl=1 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="./asyncStorage.js.download" type="text/javascript"></script>
+        <script>
+            var querystring = window.location.search,
+                params = {};
+            if (querystring.indexOf('?') === 0) {
+                var parts = querystring.substring(1).split('&');
+                parts.forEach(function(part) {
+                    var kv = part.split('=');
+                    params[kv[0]] = kv[1];
+                });
+            }
+            var ssl = (params.ssl) ? 's' : '',
+                port = (params.port) ? (':' + params.port) : '';
+
+            TutorsAsyncStorage.child(window, {
+                origin: 'http' + ssl + '://' + window.location.hostname + port + '/',
+                scope: 'chat-storage'
+                //,debugOutput: true
+            });
+        </script>
+    </head>
+    <body>
+
+</body></html>
