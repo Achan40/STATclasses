@@ -13,7 +13,7 @@ predict(horseshoe.ols, data.frame(weight = 5200), type = "response")
 #For the predicted probability of a crab having a satellite with weight = 5200, a probability of 1.533186 does not make too much sense
 
 #b
-horseshoe.ML = 
+#horseshoe.ML = glm(y ~ weight, family = binomial(link="identity"), data = horseshoe)
 
 #c
 horseshoe.log = glm(y ~ weight, family = binomial,data = horseshoe) 
