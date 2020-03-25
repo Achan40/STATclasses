@@ -155,3 +155,106 @@ boot_resamples=map(resamp_idx,~make_boot_resample(data = bstn,idx=.x))
 boot_replicates=map_dbl(boot_resamples,~predict(lm(medv ~ rm, data = .x), data.frame(rm = 4.049)))
 #inner 90% bootstrap replicates
 quantile(boot_replicates,prob=c(0.05,0.95))
+
+#8.7
+# load packages
+library("purrr")
+library("tibble")
+library("rpart")
+
+# set seed 
+set.seed(50200)
+
+# load data
+data(Glass, package = "mlbench")
+
+# coerce to tibble
+glass = as_tibble(Glass)
+
+# store indexes for 10 fold cross-validation
+index_fold = caret::createFolds(glass$Type, k = 5)
+
+#Create Accuracy funciton
+calc_ACC = function(actual,predicted){
+  mean(actual==predicted)
+}
+#Accuracy functino for one fold
+calc_ACC_fold = function(fold_idx){
+  est = glass[-fold_idx, ]
+  val = glass[fold_idx, ]
+  pred_val = predict(rpart(Type~., data = est, cp =.001,minsplit = 20),val,type = "class") #create model and predict with val data
+  calc_ACC(actual = val$Type,predicted = pred_val)
+}
+
+#ACC all folds
+ACC_all_folds = map_dbl(index_fold,calc_ACC_fold)
+#cross validation ACC&se
+mean(ACC_all_folds)
+sd(ACC_all_folds)
+
+#8.8
+# set seed 
+set.seed(60145)
+
+# load data and coerce to tibble
+bstn = tibble::as_tibble(MASS::Boston)
+
+# store indexes for 10 fold cross-validation
+index_fold = caret::createFolds(bstn$medv, k = 10)
+
+# extract the knnreg function from the caret package
+knnreg = caret::knnreg
+
+#cross validation takes place within the dataset, need to repeat RMSE n times, create est data for n fold, val data for n folds, etc...
+#RMSE function
+calc_rmse = function(actual, predicted){
+  sqrt(mean((actual-predicted)^2))
+}
+
+#RMSE for a specific fold
+calc_rmse_fold = function(fold_idx){
+  est = bstn[-fold_idx, ]
+  val = bstn[fold_idx, ]
+  pred_val = predict(knnreg(medv~., data = est, k =7),val)
+  calc_rmse(actual = val$medv,predicted = pred_val)
+}
+
+#numeric so map_dbl
+RMSE_all_folds = map_dbl(index_fold, calc_rmse_fold)
+
+#10fold cross validate is mean of all those RMSE of folds
+mean(RMSE_all_folds)
+sd(RMSE_all_folds)
+
+#8.9
+# load packages
+library("purrr")
+library("tibble")
+
+# set seed 
+set.seed(91113)
+
+# load and coerce data to tibble
+bstn = as_tibble(MASS::Boston)
+
+# store indexes for 10 fold cross-validation
+index_fold = caret::createFolds(bstn$medv, k = 10)
+
+#function for the metric
+calc_metric = function(actual,predicted){
+  sum(abs(actual-predicted)>3)/length(actual)
+}
+#metric for a specific fold
+calc_metric_fold = function(fold_idx){
+  est = bstn[-fold_idx, ]
+  val = bstn[fold_idx, ]
+  pred_val = predict(lm(medv~black, data = est),val)
+  calc_metric(actual = val$medv,predicted = pred_val)
+}
+
+#numeric so map_dbl
+metric_all_folds = map_dbl(index_fold, calc_metric_fold)
+
+#10fold cross validate is mean of all those metric of folds
+mean(metric_all_folds)
+sd(metric_all_folds)
