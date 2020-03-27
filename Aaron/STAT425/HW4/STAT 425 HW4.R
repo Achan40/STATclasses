@@ -52,7 +52,7 @@ sqrt(e$val[1]/e$val)
 round(cor(longley), dig=2)
 #Year is correlated highly corrlated with all variables except Unemployed and Armed.Forces
 #Armed forces is not very correlated with any of the other variables
-#GNP and GNP.deflator are esstially correlated with other predictors exactly, porbably should not have both of them in our model at the same time.
+#GNP and GNP.deflator are esstially correlated with other predictors exactly, porbably should not have both of them in our model at the same time.  
 
 #c
 round(vif(m3_mat), dig=2)
