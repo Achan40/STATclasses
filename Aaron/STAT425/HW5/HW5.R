@@ -1,8 +1,11 @@
-library(faraway)
-library(ggplot2)
-library(car)
-library(splines)
-library(lmtest)
+options(warn=-1)
+suppressPackageStartupMessages({
+  library(faraway)
+  library(ggplot2)
+  library(car)
+  library(splines)
+  library(lmtest)
+})
 #Problem 1
 #a
 data(aatemp)
