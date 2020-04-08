@@ -33,3 +33,33 @@ summary(mod1.ls)
 #The GLS model allows for an effect of time by not assuming normally distribusted residuals. There is a linear relationship somewhere, GLS takes that into account before creating a model.
 #The LS model allows for an effect of time by using a linear explanatory variable in the regression. This way, the effect of time can be reflected in predictions.
 
+#Problem 2
+data("cars")
+
+#a
+plot(dist ~ speed, xlab="Speed", ylab="Distance", data = cars)
+
+#b
+mod2 = lm(dist ~ speed, data = cars)
+abline(mod2, col="Blue")
+
+#c
+mod2.quad = lm(dist ~ poly(speed,2,raw=TRUE), data = cars)
+x = sort(cars$speed)
+y = mod2.quad$fitted.values[order(cars$speed)]
+lines(x,y, col = "Red")
+
+#d
+mod2.sqrt = lm(sqrt(dist) ~ speed, data = cars)
+summary(mod2.sqrt)
+z = mod2.sqrt$fitted.values[order(cars$speed)]
+lines(x,z, col = "Green")
+
+#e
+plot(dist ~ speed, xlab="Speed", ylab="Distance", data = cars)
+#cubic spline fit with 6 degrees of freedom
+mod2.spline = lm(dist ~ ns(speed, df = 5), data = cars)
+lines(spline(speed, predict(mod2.spline)), col = "Orange", lty = 1)
+#Compared to the previous fits, the spline fit seems to follow the data better than the square root fit. 
+#The model with the square root of the response barely followed the data at all. Least accurate out of all of our models.
+#A Spline fit seemed to be much better, but it is also more flexible than the linear or quadratic models, which may mean the spline model is less accurate.
