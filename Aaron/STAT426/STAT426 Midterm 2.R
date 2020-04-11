@@ -24,8 +24,8 @@ x = sort(kypho$Age)
 y = predict(kyphofit2, list(Age = x), type = "response")
 #add the new model lines
 lines(x,y, col = "Blue")
-#There appears to be a wider range in age for kyphosis to be absent, whereas with kyphosis being present had a more narrow range.
-#With this study in particular, it appears that after being slightly over 150 months in age, kyphosis tends to be absent. However, this is only an observation here; It does not apply to all kyphosis groups.
+#Our model with the second order term tells us that as Age increases, the probability for kyphosis present increases until about age 100
+#After Age 100, the probabilty for kyphosis present decreases almnost as sharply as it rose from age 0 to age 100.
 
 #Problem 2
 heart = data.frame(read.csv(file = 'heart.csv',header = T))
