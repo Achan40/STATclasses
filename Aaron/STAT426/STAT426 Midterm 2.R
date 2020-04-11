@@ -1,5 +1,33 @@
-#Problem 2
+#Problem 1
 setwd("/Users/chanm/Desktop")
+kypho = data.frame(read.csv(file = "kyphosis.csv",header = T))
+#a
+kyphofit = glm(Kyphosis ~ Age, data = kypho, family = binomial)
+summary(kyphofit)
+#The model has the form: -0.545878+0.003379(age)
+#Age has a pvalue of 0.567, greater than our alpha=0.05, we cannot reject H0: age is an insignificant variable. We can conclude that age is an insignificant variable at alpha=.05 when determining the presence of kyphosis.
+
+#b
+#conditional density plot of Kyphosis ~ Age model
+kypho$Kyphosis = factor(kypho$Kyphosis)#need to turn into factor for cd plot to correctly work
+cdplot(Kyphosis ~ Age, data = kypho, yaxlabels = c("K Absent(0)","K Present(1)"))
+#from the chart, we can determine that kyphosis being present is at the highest dispersion at age 100, and begins to decline from then on. 
+
+#create model with squared term 
+kyphofit2 = glm(Kyphosis ~ Age + I(Age^2), data = kypho, family = binomial)
+summary(kyphofit2)
+#Age^2 resulted in a p-value of 0.0361 which is less than our alpha=0.05. We can reject H0: age^2 is an insignificant variable. Age^2 is a significant term when determining kyphosis.
+
+kypho$Kyphosis = as.numeric(levels(kypho$Kyphosis))[kypho$Kyphosis]#convert back to numeric so that y-axis display correctly
+plot(kypho$Age,kypho$Kyphosis,type = "p", main = "Kyphosis vs. Age", xlab = "Age", ylab = "Kyphosis")
+x = sort(kypho$Age)
+y = predict(kyphofit2, list(Age = x), type = "response")
+#add the new model lines
+lines(x,y, col = "Blue")
+#There appears to be a wider range in age for kyphosis to be absent, whereas with kyphosis being present had a more narrow range.
+#With this study in particular, it appears that after being slightly over 150 months in age, kyphosis tends to be absent. However, this is only an observation here; It does not apply to all kyphosis groups.
+
+#Problem 2
 heart = data.frame(read.csv(file = 'heart.csv',header = T))
 #rate data is accounted by log(n)
 heart$logTatR = log(heart$TatR)
