@@ -30,6 +30,7 @@ mod1.ls = lm(taste~., data = cheddar)
 summary(mod1.ls)
 #Our coefficient for time seems to have a negative relationship with the response.
 
+#d
 #The GLS model allows for an effect of time by not assuming normally distribusted residuals. There is a linear relationship somewhere, GLS takes that into account before creating a model.
 #The LS model allows for an effect of time by using a linear explanatory variable in the regression. This way, the effect of time can be reflected in predictions.
 
@@ -59,7 +60,7 @@ lines(x,z, col = "Green")
 plot(dist ~ speed, xlab="Speed", ylab="Distance", data = cars)
 #cubic spline fit with 6 degrees of freedom
 mod2.spline = lm(dist ~ ns(speed, df = 5), data = cars)
-lines(spline(speed, predict(mod2.spline)), col = "Orange", lty = 1)
+lines(spline(cars$speed, predict(mod2.spline)), col = "Orange", lty = 1)
 #Compared to the previous fits, the spline fit seems to follow the data better than the square root fit. 
 #The model with the square root of the response barely followed the data at all. Least accurate out of all of our models.
 #A Spline fit seemed to be much better, but it is also more flexible than the linear or quadratic models, which may mean the spline model is less accurate.
