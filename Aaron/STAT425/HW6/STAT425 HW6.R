@@ -91,3 +91,25 @@ summary(mod)
 #Second Best Breed in terms of Butterfat content: Guemsey (See Age vs Butterfat interaction plot)
 #No the best breed interms of butterfat content are not clearly superior to the second best breed, their estimated coefficients seem to be fairly close to each other.
 coef(mod)
+
+#Problem 2
+data(morley)
+mod2 = lm(Speed ~ Expt*Run, data = morley)
+
+#Fit two-way ANOVA model
+anova(mod2)
+
+#Expt
+#H0: mean speeds are equal vs Ha: at least one mean speed is different
+#Expt has a pval < alpha=.05, making it a significant variable. H0 is can be rejected and we can say that the mean speed is different across experiments.
+
+#Run
+#H0: mean runs are equal  vs Ha: at least one run has different mean speed 
+#Run has a pval > alpha=.05, the Run factor is not a significant variable. We fail to reject H0 and can say that there is no difference in mean speed throughout the runs.
+
+#Expt*Run
+#H0: no interaction b/t Expt and Run vs Ha: interaction b/t Expt and Run
+#Expt*Run has pval > alpha=.05, Expt*Run is not a significant variable. Fail to reject H0, there is no interaction between Experiment and Run.
+
+#We can say that there is a significant difference b/t experiment and speed. On the other hand, there is not significant difference b/t to runs and speed. Interaction b/t experiments and runs is also insignificant.
+#In this case Expt was the blocking factor,we could see that Experiment is a statistically significant variable.
