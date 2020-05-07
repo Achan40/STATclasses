@@ -25,3 +25,14 @@ mcnemar.test(tab1,correct=FALSE)
 #We are dealing with dichotomous variables where one independent is shared bewteen the connected groups, and the groups in our dependent are mutually exclusive from each other
 #These facts suggest that the marginal proportions are strongly dependent.
 #The infrences in part a are more precise than if we hand independent samples because the dependent samples allow us to form a relationship between the two groups
+
+#Problem 2
+#a
+exp(log((tab[3,1]/tab[3,2])/(tab[1,3]/tab[2,3])))
+
+#b
+exp(log(tab[2,1]/tab[1,2]))
+
+#c
+#The population-averaged effect model has an estimated odds ratio larger than the subject-specific effect model
+#The first model accounts for totality, while the subject-specific model accounts for the "false positives" and "false negatives"
