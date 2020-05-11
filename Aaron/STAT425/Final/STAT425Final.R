@@ -1,4 +1,6 @@
 library(faraway)
+library(randomForest)
+library(car)
 setwd("/Users/chanm/Desktop/STATclasses/Aaron/STAT425/Final")
 
 Resort = data.frame(read.csv(file = "stat425_fpdata.csv",header = T))
@@ -7,7 +9,8 @@ Resort = Resort[Resort$hotel == "Resort Hotel",]
 
 #Exploratory Analysis
 #Remove unneccsary time variables as well as uneccesarry variables
-Resort = subset(Resort, select = -c(arrival_date_year, arrival_date_week_number, arrival_date_day_of_month, hotel, is_canceled, reserved_room_type, meal, market_segment, customer_type))
+Resort = subset(Resort, select = -c(arrival_date_year, arrival_date_week_number, arrival_date_day_of_month, hotel, reserved_room_type, meal, market_segment, customer_type))
+Resort$is_canceled = as.factor(Resort$is_canceled)
 
 #Testing Non-linearity
 #Figure 1
@@ -20,7 +23,7 @@ title("Figure 1", line = -1, outer = T)
 
 #Model creation
 #Simple model with interation term (base model)
-mod1 = glm(adr ~ . - children - babies + adults:children + adults:babies, data = Resort)
+mod1 = glm(adr ~ ., data = Resort)
 summary(mod1)
 plot(mod1)
 #Residuals vs Fitted shows that we can assume a linear relationship between explanatory variables and the response
@@ -31,9 +34,12 @@ shapiro.test(residuals(mod1))
 #Residuals vs Leverage plot shows that we have some high leverage points, some exceed 3 standard deviations, we may have to remove them top get a better model, could be a result of non-normality in our data
 #influential points
 plot(mod1,4)
+#collinearity
+vif(mod1)
 
-#Model using backward regression
-mod.back = step(mod1, adr ~ . - children - babies + adults:children + adults:babies, direction = "backward")
+#Model using backward regression w/ AIC and with interaction terms
+mod2 = glm(adr ~ . - children - babies + adults:children + adults:babies,data = Resort)
+mod.back = step(mod2, direction = "backward")
 summary(mod.back)
 plot(mod.back)
 #Residuals vs Fitted shows that we can assume a linear relationship between explanatory variables and the response
@@ -44,4 +50,53 @@ shapiro.test(residuals(mod.back))
 #Residuals vs Leverage plot shows that we have some high leverage points, some exceed 3 standard deviations, we may have to remove them top get a better model, could be a result of non-normality in our data
 #influential points
 plot(mod.back,4)
+#collinearity
+vif(mod2)
 
+#Adjusted R-square to determine significant variables
+library(leaps)
+r2mod = regsubsets(adr ~ . - children - babies + adults:children + adults:babies,data = Resort)
+r2s = summary(r2mod)
+r2s$which
+msize = 2:9
+r2s$which[which.max(r2s$adjr2),]
+selectVar = colnames(r2s$which)[r2s$which[which.max(r2s$adjr2),]]
+selectVar = selectVar[-1]
+selectVar
+
+#Mallow's CP to determine significant variables
+r2s$which[which.min(r2s$cp),]
+selectVar = colnames(r2s$which)[r2s$which[which.min(r2s$cp),]]
+selectVar = selectVar[-1]
+selectVar
+
+#Randomforest 
+
+#Split into train and validation data 
+set.seed(100)
+train = sample(1:nrow(Resort), 400)
+
+#Starting Model
+mlMod = randomForest(adr ~ . - children - babies + adults:children + adults:babies, data = Resort, subset = train)
+mlMod
+#plotting error vs number of trees
+plot(mlMod)
+
+oob.err=double(10)
+test.err=double(10)
+
+#mtry is the number of variables randomly chosen at each split
+for(mtry in 1:10) 
+{
+  rf = randomForest(adr ~ . - children - babies + adults:children + adults:babies, data = Resort, subset = train, mtry = mtry,ntree = 400) 
+  oob.err[mtry] = rf$mse[400] #Error of all Trees fitted
+  
+  pred = predict(rf,Resort[-train,]) #Predictions on Test Set for each Tree
+  test.err[mtry] = with(Resort[-train,], mean((adr - pred)^2)) #Mean Squared Test Error
+}
+test.err
+#minmize error at mtry = 4
+min(test.err) 
+
+mlMod2 = randomForest(adr ~ . - children - babies + adults:children + adults:babies, data = Resort, subset = train, mtry = 4,ntree = 400) 
+mlMod2
