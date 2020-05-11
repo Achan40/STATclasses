@@ -24,7 +24,7 @@ title("Figure 1", line = -1, outer = T)
 
 #Model creation
 #Simple model with interation term (base model)
-mod1 = glm(adr ~ ., data = Resort)
+mod1 = glm(is_canceled ~ ., data = Resort, family = binomial)
 summary(mod1)
 plot(mod1)
 #Residuals vs Fitted shows that we can assume a linear relationship between explanatory variables and the response
@@ -39,7 +39,7 @@ plot(mod1,4)
 vif(mod1)
 
 #Model using backward regression w/ AIC and with interaction terms
-mod2 = glm(adr ~ . - children - babies + adults:children + adults:babies,data = Resort)
+mod2 = glm(is_canceled ~ . - children - babies + adults:children + adults:babies,data = Resort, family = binomial)
 mod.back = step(mod2, direction = "backward")
 summary(mod.back)
 plot(mod.back)
@@ -55,19 +55,19 @@ plot(mod.back,4)
 vif(mod2)
 
 #Train Test Split for Prediction
-set.seed(10)
-trainInt = sample(1:nrow(Resort), 400)
+set.seed(100)
+trainInt = sample(1:nrow(Resort), .6*nrow(Resort))
 train = Resort[trainInt,]
 test = Resort[-trainInt,]
 
-#Calculate MSE for the accuracy of the model
-pred = predict(mod2, test)
-test.err = with(test, mean((adr - pred)^2))
-test.err
+#Calculate accuracy of the model
+prob = predict(mod2, test, type = "response")
+predClass = ifelse(prob > .5, 1, 0)
+mean(predClass == test$is_canceled)
 
 #Adjusted R-square to determine significant variables
 
-r2mod = regsubsets(adr ~ . - children - babies + adults:children + adults:babies,data = Resort)
+r2mod = regsubsets(is_canceled ~ . - children - babies + adults:children + adults:babies,data = Resort)
 r2s = summary(r2mod)
 r2s$which
 msize = 2:9
@@ -84,29 +84,26 @@ selectVar
 
 #Randomforest 
 
-#Split into train and validation data 
-trainInt = sample(1:nrow(Resort), 400)
+#Split into train and validation data (70/30)
+trainInt = sample(1:nrow(Resort), .6*nrow(Resort))
 train = Resort[trainInt,]
 test = Resort[-trainInt,]
 
 #Starting Model
-mlMod = randomForest(adr ~ ., data = Resort, subset = trainInt)
+mlMod = randomForest(is_canceled ~ ., data = Resort, subset = trainInt)
 mlMod
-#plotting error vs number of trees
-plot(mlMod)
 
-test.err = double(10)
-
+test.acc = double(10)
 #mtry is the number of variables randomly chosen at each split
 for(mtry in 1:10) 
 {
-  rf = randomForest(adr ~ . , data = Resort, subset = trainInt, mtry = mtry,ntree = 400) 
-  pred = predict(rf,test) #Predictions on Test Set for each Tree
-  test.err[mtry] = with(test, mean((adr - pred)^2)) #Mean Squared Test Error
+  rf = randomForest(is_canceled ~ . , data = Resort, subset = trainInt, mtry = mtry,ntree = 400) 
+  prob.rf = predict(rf,test,type = "response") #Predictions on Test Set for each Tree
+  test.acc[mtry] = with(test, mean(is_canceled == prob.rf)) #Mean Squared Test Error
 }
-test.err
+test.acc
 #minmize MSE at mtry = 5
-min(test.err)
+max(test.acc)
 
-mlMod2 = randomForest(adr ~ . - children - babies + adults:children + adults:babies, data = Resort, subset = trainInt, mtry = 5,ntree = 400) 
+mlMod2 = randomForest(is_canceled ~ . - children - babies + adults:children + adults:babies, data = Resort, subset = trainInt, mtry = 5,ntree = 400) 
 mlMod2
