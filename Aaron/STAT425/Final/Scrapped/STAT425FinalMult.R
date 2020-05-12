@@ -28,12 +28,12 @@ mod1 = glm(adr ~ ., data = Resort)
 summary(mod1)
 plot(mod1)
 title("Figure 2", line = -1, outer = T)
-#Residuals vs Fitted shows that we can assume a linear relationship between explanatory variables and the response
-#Normal QQ plot shows our residuals are not exactly normal, perform shapiro test to be sure
+#Residuals vs Fitted (tests lin relationship)
+#Normal QQ plot (normality of residuals)
 shapiro.test(residuals(mod1))
 #The result of sharpio-wilks testing H0 = data is normally distributed vs Ha = data is not normally distributed, shows we reject H0, data is not normally distributed. May have to perform transformation of our data
-#Scale-Location plot shows variance is not homogenous, may need to perform a transformation
-#Residuals vs Leverage plot shows that we have some high leverage points, some exceed 3 standard deviations, we may have to remove them top get a better model, could be a result of non-normality in our data
+#Scale-Location plot (homogeneity of variance)
+#Residuals vs Leverage plot 
 #influential points
 par(mfrow = c(1,1))
 plot(mod1,4)
@@ -48,12 +48,12 @@ summary(mod.back)
 par(mfrow = c(2,2))
 plot(mod.back)
 title("Figure 3", line = -1, outer = T)
-#Residuals vs Fitted shows that we can assume a linear relationship between explanatory variables and the response
-#Normal QQ plot shows our residuals are not exactly normal, perform shapiro test to be sure
+#Residuals vs Fitted (tests lin relationship)
+#Normal QQ plot (normality of residuals)
 shapiro.test(residuals(mod.back))
 #The result of sharpio-wilks testing H0 = data is normally distributed vs Ha = data is not normally distributed, shows we reject H0, data is not normally distributed. May have to perform transformation of our data
-#Scale-Location plot shows variance is not homogenous, may need to perform a transformation
-#Residuals vs Leverage plot shows that we have some high leverage points, some exceed 3 standard deviations, we may have to remove them top get a better model, could be a result of non-normality in our data
+#Scale-Location plot (homogeneity of variance)
+#Residuals vs Leverage plot 
 #influential points
 par(mfrow = c(1,1))
 plot(mod.back,4)
