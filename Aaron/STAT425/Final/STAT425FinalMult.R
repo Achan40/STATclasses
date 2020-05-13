@@ -30,8 +30,8 @@ plot(mod1)
 title("Figure 2", line = -1, outer = T)
 #Residuals vs Fitted (tests lin relationship)
 #Normal QQ plot (normality of residuals)
+#SW Test
 shapiro.test(residuals(mod1))
-#The result of sharpio-wilks testing H0 = data is normally distributed vs Ha = data is not normally distributed, shows we reject H0, data is not normally distributed. May have to perform transformation of our data
 #Scale-Location plot (homogeneity of variance)
 #Residuals vs Leverage plot 
 #influential points
@@ -100,11 +100,11 @@ mlMod = randomForest(adr ~ ., data = Resort, subset = trainInt)
 mlMod
 #plotting error vs number of trees
 plot(mlMod)
+title("Figure 4", line = -1, outer = T)
 
-test.err = double(10)
-
-#mtry is the number of variables randomly chosen at each split
-for(mtry in 1:10) 
+test.err = double(9)
+#loop with n mtry
+for(mtry in 1:9) 
 {
   rf = randomForest(adr ~ . , data = Resort, subset = trainInt, mtry = mtry,ntree = 400) 
   pred = predict(rf,test) #Predictions on Test Set for each Tree
